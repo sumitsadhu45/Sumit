@@ -1,0 +1,49 @@
+stock = input("Enter Indian stock ticker (e.g., INFY for Infosys, RELIANCE for Reliance): ").upper()
+full_stock = stock + ".NS"
+df = analyze_stock(full_stock)
+import yfinance as yf
+import pandas as pd
+import matplotlib.pyplot as plt
+import streamlit as st
+
+st.set_page_config(page_title="Indian Stock Analysis", layout="wide")
+
+st.title("📊 Indian Stock Price Analyzer")
+stock = st.text_input("Enter Indian Stock Ticker (e.g., INFY, RELIANCE):", "INFY")
+
+start_date = st.date_input("Start Date", pd.to_datetime("2023-01-01"))
+end_date = st.date_input("End Date", pd.to_datetime("2024-01-01"))
+
+if st.button("Analyze"):
+    full_stock = stock.upper() + ".NS"
+    df = yf.download(full_stock, start=start_date, end=end_date)
+    df['MA20'] = df['Close'].rolling(window=20).mean()
+    df['MA50'] = df['Close'].rolling(window=50).mean()
+
+    st.subheader(f"{stock.upper()} Stock Price from {start_date} to {end_date}")
+    st.line_chart(df[['Close', 'MA20', 'MA50']])
+
+    st.subheader("Recent Data")
+    st.dataframe(df.tail())
+pip install yfinance pandas matplotlib streamlit
+yfinance
+pandas
+matplotlib
+streamlit
+stock-analysis-india/
+│
+├── app.py                 # Streamlit app
+├── stock_analysis.py      # CLI version
+├── requirements.txt
+├── README.md
+└── output/
+    └── INFY_stock_analysis.png
+python stock_analysis.py
+streamlit run app.py
+cd stock-analysis-india
+git init
+git add .
+git commit -m "Initial commit - Stock Price Analyzer for Indian Stocks"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/stock-analysis-india.git
+git push -u origin main
